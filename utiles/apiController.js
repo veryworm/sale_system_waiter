@@ -13,10 +13,10 @@ const Userapi = {
 // 	CustomerFind:{api:baseURL + '/customer/findAll',methods:'GET'},
 // 	CustomerSave:{api:'/customer/saveOrUpdate'}
 // }
-// const Commentapi = {
-// 	CommentFind:{api:'/comment/findAll',methods:'GET'},
-// 	CommenSaveOrUpdate:{api:'/comment/saveOrUpdate'}
-// }
+const Commentapi = {
+	CommentFind:{api:'/comment/findAll',methods:'GET'},
+	CommenSaveOrUpdate:{api:'/comment/saveOrUpdate'}
+}
 const Productapi= {
 	ProductFindAll:{api:baseURL + '/product/findAll',methods:'GET'},
 	ProductFindById:{api:baseURL + '/product/findById',methods:'GET'}
@@ -25,13 +25,14 @@ const Orderapi = {
 	OrderConfirm:{api:'/order/confirmOrder?orderId='},
 	OrderFindAll:{api:'/order/findAll'},
 	OrderFindById:{api:'/order/getOrderLinesByOrderId?orderId='},
+	OrderserviceComplete:{api:'/order/serviceCompleteOrder?orderId='}
 }
 export {
 	Userapi,
 	Productapi,
 	// UserAddressapi,
 	// Customerapi,
-	Orderapi
-	// Commentapi
+	Orderapi,
+	Commentapi
 	
 }

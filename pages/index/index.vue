@@ -51,8 +51,7 @@
 		},
 		data() {
 			return {
-				current: 0,
-				items: ['待接单','已完成','全部订单']
+				current: 0
 			}
 		},
 		computed:{
@@ -61,12 +60,13 @@
 		created() {
 			this.allrefreshtoken()
 			this.searchProducts()
+			this.findAllOrder()
 		},
 		onLoad() {
 
 		},
 		methods: {
-			...mapActions('login',['info1']),
+			...mapActions('login',['info1','findAllOrder']),
 			...mapActions('product',['searchProducts']),
 			// 跳转登录
 			toLoginOrRegister(){

@@ -3,8 +3,7 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "我的",
-				"navigationStyle":"custom"
+				"navigationBarTitleText": "我的"
 			}
 		},
 		{
@@ -17,7 +16,14 @@
 	    ,{
             "path" : "pages/order/order",
             "style" : {}
-        }
+        },
+		{
+		    "path" : "pages/order/orderstatus",
+		    "style" : {
+				"navigationBarTitleText": "订单详情",
+				"navigationStyle":"custom"
+			}
+		}
     ],
 	"tabBar": {
 	    "color": "#7A7E83",

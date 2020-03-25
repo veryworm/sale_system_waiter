@@ -7,12 +7,12 @@ export const mixStatus = {
 		}
 	},
 	computed:{
-		gridList(){
-			if(this.gridData){
-				return this.gridData
-			}else{
-			}
-		}
+		// gridList(){
+		// 	if(this.gridData){
+		// 		return this.gridData
+		// 	}else{
+		// 	}
+		// }
 	},
 	watch:{
 		
@@ -21,7 +21,7 @@ export const mixStatus = {
 		// this.searchProducts()
 	},
 	methods:{
-		...mapActions('user',['info1']),
+		...mapActions('login',['info1']),
 		// async search(){
 		// 	let resp =  await this.searchBody.call(this)
 		// 	if(resp){

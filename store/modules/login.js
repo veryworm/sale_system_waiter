@@ -1,4 +1,4 @@
-import {  Userapi, Orderapi} from '../../utiles/apiController.js'
+import {  Userapi, Orderapi, Commentapi, Productapi} from '../../utiles/apiController.js'
 import { post_array, post_json, get, post} from '../../http/axios.js'
 import { setToken, getToken, removeToken } from '../../utiles/auth.js'
 export default {
@@ -8,7 +8,10 @@ export default {
 		info:{},
 		// 订单分类
 		ordersort1:[],
-		refreshWaiterData:[]
+		currentWaiterOrder:[],
+		refreshCommentOfVoidData:[],
+		allContent:[],
+		searchOrderData:[]
 	},
 	getters:{
 		
@@ -17,8 +20,15 @@ export default {
 		refreshInfo(state,info){
 			state.info = info
 		},
-		refreshWaiterOrder(state,refreshWaiterData){
-			state.refreshWaiterData = refreshWaiterData
+		refreshWaiterOrder(state,currentWaiterOrder){
+			state.currentWaiterOrder = currentWaiterOrder
+		},
+		// 刷新
+		refreshCommentOfVoid(state,refreshCommentOfVoidData){
+			state.refreshCommentOfVoidData = refreshCommentOfVoidData
+		},
+		refreshallContent(state,allContent){
+			state.allContent = allContent
 		},
 		refreshOrderSort(state,currentAllOrder){
 			if(currentAllOrder.length!==0){
@@ -31,6 +41,11 @@ export default {
 					},
 					{
 						name:'已完成',
+						imgsrc:'../../static/have_finished.png',
+						length:""
+					},
+					{
+						name:'服务评价',
 						imgsrc:'../../static/have_finished.png',
 						length:""
 					},
@@ -52,16 +67,23 @@ export default {
 					return item.status == '已完成'
 				}) 
 				ordersort1[1].length = haveFinishLength.length
-				console.log(ordersort1,'ss')
+				
+				// 评价内容
+				if(state.allContent!==undefined){
+					let noCommentLength = state.allContent.filter((item)=>{
+						return item.iscontent !== true
+					}) 
+					ordersort1[2].length = noCommentLength.length
+				}
 				
 				// 全部
-				ordersort1[2].length = currentAllOrder.length
+				ordersort1[3].length = currentAllOrder.length
 				state.ordersort1 = ordersort1
 			}
+		},
+		refreshSearchOrder(state,searchOrderData){
+			state.searchOrderData = searchOrderData
 		}
-		// refreshWaiterData(state,refreshWaiterData){
-		// 	state.refreshWaiterData = refreshWaiterData
-		// }
 	},
 	actions:{
 		async Login({commit,dispatch},payload){
@@ -74,7 +96,6 @@ export default {
 		async info1({commit,dispatch},token){
 			let response = await get(Userapi.Userinfo.api,{token})
 			commit("refreshInfo",response.data)
-			dispatch('findAllOrder',response.data.id)
 			return response.data
 		},
 		// 根据waiterId拿所有与之相符的订单
@@ -84,27 +105,77 @@ export default {
 				response.data[i].photo = rootState.product.productsImg[i].photo
 			}
 			// 过滤出与当前顾客id所有的订单
-			if(typeof(status) == "number"){
-				let currentAllOrder = response.data.filter((item)=>{
-					// 这里的status为id
+			if(status==undefined){
+				let currentWaiterOrder = response.data.filter((item)=>{
 					return item.waiterId == state.info.id
 				})
-				commit("refreshWaiterOrder",currentAllOrder)
-				// // 未评价订单数量
-				// let notCommentNumber = response.data.filter((item)=>{
-				// 	return item.customerId == rootState.user.info.id && item.status ==  "已完成"
-				// })
-				// await dispatch("findAllComments",notCommentNumber)
-				commit("refreshOrderSort",currentAllOrder)
+				commit("refreshWaiterOrder",currentWaiterOrder)
+				commit("refreshOrderSort",currentWaiterOrder)
 			}else{
 				// 过滤出与当前顾客订单状态相符的订单
-				let currentCustomerOrder = response.data.filter((item)=>{
-					return item.customerId == state.info.id && item.status ==  status
+				let currentWaiterOrder = response.data.filter((item)=>{
+					return item.waiterId == state.info.id && item.status ==  status
 				})
-				commit("refreshWaiterOrder",currentCustomerOrder)
+				
+				let CommentNumber = response.data.filter((item)=>{
+					return item.waiterId == state.info.id && item.status ==  "已完成"
+				})
+				
+				await dispatch("findAllComments",CommentNumber)
+				commit("refreshWaiterOrder",currentWaiterOrder)
 			}
+		},
+		async serviceComplete({commit},id){
+			let response= await get(Orderapi.OrderserviceComplete.api+id)
+			return response
+		},
+		// 查评论
+		async findAllComments({commit},myitem){
+			// myitem为已完成订单项的数据
+			let arr = [];
+			let response = await get(Commentapi.CommentFind.api)
+			// 双重遍历,第一次拿到完成订单orderId与订单评论完成的orderId, 第二次循环把通过的值push到arr里
+			for(let item3 of myitem){
+				let result = response.data.filter((item)=>{
+					return item.orderId !== null && item.orderId == item3.id
+				})
+				for(let item4 of result){
+					arr.push(item4)
+				}
+			}
+			commit("refreshCommentOfVoid",arr)
+			// 把已完成订单和评价完的订单的数据做一次整合
+			let arr1 = []
+			myitem.forEach(i => {
+			    arr.forEach(j => {
+			        if (i.id == j.orderId){
+			            i.iscontent = true
+						arr1.push(myitem)
+			        }
+			    })
+			})
+			commit("refreshallContent",arr1[0])
+		},
+		// 根据id搜索订单
+		async searchOrderHandler({commit,dispatch},id){
+			let response = await get(Orderapi.OrderFindById.api+id)
+			dispatch("findProduct",response.data)
+		},
+		async findProduct({commit,dispatch},searchOrderData){
+			let response = await get(Productapi.ProductFindAll.api)
+			let arr1 = []
+			// 因为搜到的数据没有产品的图片和产品的name,这里过滤出来与product的id相同的数据,然后拼接到搜到的数据中
+			searchOrderData.forEach(i => {
+			    response.data.forEach(j => {
+			        if (i.productId == j.id){
+			            i.name = j.name
+						i.proto = j.photo
+						arr1.push(i)
+			        }
+			    })
+			})
+			commit("refreshSearchOrder",arr1)
 		}
-		
 		
 		// async waiterFindAll({commit,dispatch},id){
 		// 	let response = await get(Customerapi.CustomerFind.api)
