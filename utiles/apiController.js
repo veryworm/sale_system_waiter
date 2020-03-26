@@ -4,11 +4,12 @@ const Userapi = {
 	UserLogin:{api:'/user/login'},
 	UserLogout:{api:'/user/logout',methods:'POST'}
 }
-// const UserAddressapi = {
-// 	UserDeleteId:{api:'/address/deleteById?id='},
-// 	UserfindById:{api:baseURL + '/address/findByCustomerId?id=',methods:'GET'},
-// 	UsersaveOrUpdate:{api:baseURL + '/address/saveOrUpdate',methods:'POST'}
-// }
+const UserAddressapi = {
+	UserDeleteId:{api:'/address/deleteById?id='},
+	UserfindById:{api:baseURL + '/address/findByCustomerId?id=',methods:'GET'},
+	UserfindAll:{api:'/address/findAll'},
+	UsersaveOrUpdate:{api:baseURL + '/address/saveOrUpdate',methods:'POST'}
+}
 // const Customerapi = {
 // 	CustomerFind:{api:baseURL + '/customer/findAll',methods:'GET'},
 // 	CustomerSave:{api:'/customer/saveOrUpdate'}
@@ -30,7 +31,7 @@ const Orderapi = {
 export {
 	Userapi,
 	Productapi,
-	// UserAddressapi,
+	UserAddressapi,
 	// Customerapi,
 	Orderapi,
 	Commentapi

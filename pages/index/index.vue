@@ -3,16 +3,15 @@
 		<view class="status_bar">
 			  <!-- 这里是状态栏 -->
 		</view>
-		<view style="background-color: #bcdfff; padding: 5px 10px 5px 5px;"> 
-			<img style="width: 16px; height: 16px; position: absolute; top: 13px; left: 10px;" src="../../static/search.png" alt="">
-			<input style="border-radius: 100px; color: #1f1f1f; background-color: #f8f8f8; padding: 5px 5px 5px 30px;" @confirm="searchOrder" placeholder="根据订单号搜索订单" type="text">
+		<view> 
+			<uni-nav-bar background-color="#79a7d9" color="#ffffff"  @clickRight="setting" title="我的信息" ></uni-nav-bar>
 		</view>
 		<view class="my_header">
 			<view class="my_image">
 				<img style="width: 60px; height:60px ; border-radius: 50%;" :src="info.avatar" alt="">
 			</view>
 			<view class="my_name">
-				<text v-if="info.id!== undefined">
+				<text v-if="islogin1">
 					{{info.name}}
 				</text>
 				<text @click="toLoginOrRegister" v-else>
@@ -21,7 +20,7 @@
 			</view>
 		</view>
 		<view class="my_order_total">
-			<ul>
+			<ul v-if="islogin1">
 				<li @click="toOrderStatus(item,index)" v-for="(item,index) in ordersort1" :key="item.name">
 					<view style="position: relative; left: 80%;">
 						<uni-badge :text="item.length" size="small" type="error" :inverted="false"></uni-badge>
@@ -30,6 +29,9 @@
 					{{item.name}}
 				</li>
 			</ul>
+		</view>
+		<view class="my_order_logout">
+			<button @click="logoutWaiter()" size="mini" type="warn">{{islogin}}</button>
 		</view>
 	</view>
 </template>
@@ -55,7 +57,13 @@
 			}
 		},
 		computed:{
-			...mapState("login",["info","ordersort1","refreshWaiterData"])
+			...mapState("login",["info","ordersort1","refreshWaiterData"]),
+			islogin(){
+				return this.info.id==undefined ? '登录':'注销'
+			},
+			islogin1(){
+				return this.info.id == undefined ? false: true
+			}
 		},
 		created() {
 			this.allrefreshtoken()
@@ -66,7 +74,7 @@
 
 		},
 		methods: {
-			...mapActions('login',['info1','findAllOrder']),
+			...mapActions('login',['info1','findAllOrder','logout']),
 			...mapActions('product',['searchProducts']),
 			// 跳转登录
 			toLoginOrRegister(){
@@ -80,7 +88,19 @@
 					url:'../order/orderstatus?item='+JSON.stringify(item)
 				})
 			},
-			searchOrder(){
+			logoutWaiter(){
+				if(this.islogin1){
+					this.logout()
+					.then(()=>{
+						this.logoutsuccess()
+					})
+				}else{
+					uni.navigateTo({
+						url:'../login/login'
+					})
+				}
+			},
+			setting(){
 				
 			}
 		}
@@ -155,5 +175,9 @@
 	}
 	.onePadding{
 		padding-top: 20px;
+	}
+	.my_order_logout{
+		margin-top: 10px;
+		text-align: center;
 	}
 </style>

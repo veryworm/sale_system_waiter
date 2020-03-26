@@ -49,7 +49,7 @@ export const mixStatus = {
 			
 		},
 		// 退出成功
-		logoutnsuccess(){
+		logoutsuccess(){
 			uni.showToast({
 				title:'退出成功!',
 				icon:'none'

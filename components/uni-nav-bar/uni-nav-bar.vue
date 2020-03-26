@@ -192,9 +192,9 @@
 
 	.uni-navbar__header-container-inner {
 		/* #ifndef APP-NVUE */
-		display: flex;
+		// display: flex;
 		/* #endif */
-		flex: 1;
+		// flex: 1;
 		align-items: center;
 		justify-content: center;
 		font-size: $uni-font-size-base;

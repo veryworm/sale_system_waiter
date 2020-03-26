@@ -1,4 +1,4 @@
-import {  Userapi, Orderapi, Commentapi, Productapi} from '../../utiles/apiController.js'
+import {  Userapi, Orderapi, Commentapi, Productapi, UserAddressapi} from '../../utiles/apiController.js'
 import { post_array, post_json, get, post} from '../../http/axios.js'
 import { setToken, getToken, removeToken } from '../../utiles/auth.js'
 export default {
@@ -9,9 +9,10 @@ export default {
 		// 订单分类
 		ordersort1:[],
 		currentWaiterOrder:[],
-		refreshCommentOfVoidData:[],
-		allContent:[],
-		searchOrderData:[]
+		refreshCommentOfVoidData:[],  //已评价数据
+		allContent:[],   //全部评价数据
+		searchOrderData:[],
+		refreshOrderJoinAddressData:[]   //地址和订单拼接起来的数据
 	},
 	getters:{
 		
@@ -19,6 +20,10 @@ export default {
 	mutations:{
 		refreshInfo(state,info){
 			state.info = info
+		},
+		refreshToken(state,token){
+			state.token = token
+			console.log(state.token)
 		},
 		refreshWaiterOrder(state,currentWaiterOrder){
 			state.currentWaiterOrder = currentWaiterOrder
@@ -81,6 +86,9 @@ export default {
 				state.ordersort1 = ordersort1
 			}
 		},
+		refreshOrderJoinAddress(state,refreshOrderJoinAddressData){
+			state.refreshOrderJoinAddressData = refreshOrderJoinAddressData
+		},
 		refreshSearchOrder(state,searchOrderData){
 			state.searchOrderData = searchOrderData
 		}
@@ -109,7 +117,6 @@ export default {
 				let currentWaiterOrder = response.data.filter((item)=>{
 					return item.waiterId == state.info.id
 				})
-				commit("refreshWaiterOrder",currentWaiterOrder)
 				commit("refreshOrderSort",currentWaiterOrder)
 			}else{
 				// 过滤出与当前顾客订单状态相符的订单
@@ -122,7 +129,8 @@ export default {
 				})
 				
 				await dispatch("findAllComments",CommentNumber)
-				commit("refreshWaiterOrder",currentWaiterOrder)
+				// commit("refreshWaiterOrder",currentWaiterOrder)
+				dispatch("addressJoinOrderData",currentWaiterOrder)
 			}
 		},
 		async serviceComplete({commit},id){
@@ -175,20 +183,39 @@ export default {
 			    })
 			})
 			commit("refreshSearchOrder",arr1)
+		},
+		// 订单信息里的addressId和地址里相符的Id进行一次整合
+		async addressJoinOrderData({commit,dispatch},currentWaiterOrder){
+			let arr = new Map();
+			let response = await get(UserAddressapi.UserfindAll.api)
+			// 双重遍历,第一次拿到完成订单orderId与订单评论完成的orderId, 第二次循环把通过的值push到arr里
+			for(let item3 of currentWaiterOrder){
+				let result = response.data.filter((item)=>{
+					return item.id !== null && item.id == item3.addressId
+				})
+				for(let item4 of result){
+					arr.set(item4.id,item4)
+				}
+			}
+			
+			// 订单信息里的addressId和地址里相符的Id进行一次整合
+			let arr1 = []
+			currentWaiterOrder.forEach(i => {
+				// arr是过滤出来的与订单addressId相符的地址
+				for (let j of arr.values()){
+					if (i.addressId == j.id){
+						i.addresses = j.province + j.city + j.area + j.address
+						arr1.push(currentWaiterOrder)
+					 }
+				}
+			})
+			commit("refreshOrderJoinAddress",arr1[0])
+		},
+		async logout({commit}){
+			await post(Userapi.UserLogout.api);
+			removeToken();
+			commit('refreshToken','');
+			commit('refreshInfo',{});
 		}
-		
-		// async waiterFindAll({commit,dispatch},id){
-		// 	let response = await get(Customerapi.CustomerFind.api)
-		// 	let newresponse = response.data.filter((item)=>{
-		// 		return item.id == id
-		// 	})
-		// 	commit("refreshWaiterData", newresponse)
-		// },
-		// async logout({commit}){
-		// 	await post(Userapi.UserLogout.api);
-		// 	removeToken();
-		// 	commit('refreshToken','');
-		// 	commit('refreshInfo',{});
-		// }
 	}
 }
