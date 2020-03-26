@@ -8,7 +8,7 @@
 				<view slot="left">
 					<text @click="closeCurrentPage" style="font-size: 26px; font-weight: 550;">×</text>
 				</view>
-			</uni-nav-bar>
+			</uni-nav-bar> 
 		</view>
 		<view class="login_total">
 			<view class="login_logo">
