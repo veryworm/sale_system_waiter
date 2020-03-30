@@ -13,6 +13,20 @@
 				"navigationStyle":"custom",
 				"navigationBarTitleText": "登录"
 			}
+		},
+		{
+			"path" : "pages/login/registerUser",
+			"style" : {
+				"navigationStyle":"custom",
+				"navigationBarTitleText": "注册"
+			}
+		},
+		{
+			"path" : "pages/login/registerSuccess",
+			"style" : {
+				"navigationStyle":"custom",
+				"navigationBarTitleText": "注册成功"
+			}
 		}
 	    ,{
             "path" : "pages/order/order",

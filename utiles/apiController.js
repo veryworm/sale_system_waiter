@@ -10,10 +10,10 @@ const UserAddressapi = {
 	UserfindAll:{api:'/address/findAll'},
 	UsersaveOrUpdate:{api:baseURL + '/address/saveOrUpdate',methods:'POST'}
 }
-// const Customerapi = {
-// 	CustomerFind:{api:baseURL + '/customer/findAll',methods:'GET'},
-// 	CustomerSave:{api:'/customer/saveOrUpdate'}
-// }
+const Waiterapi = {
+	CustomerFind:{api:baseURL + '/customer/findAll',methods:'GET'},
+	WaiterSave:{api:'/waiter/saveOrUpdate'}
+}
 const Commentapi = {
 	CommentFind:{api:'/comment/findAll',methods:'GET'},
 	CommenSaveOrUpdate:{api:'/comment/saveOrUpdate'}

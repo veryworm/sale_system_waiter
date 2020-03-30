@@ -29,6 +29,9 @@
 					<view class="form_submit">
 						<button form-type="submit" style="border-radius: 25px;" type="warn">登录</button>
 					</view>
+					<view @click="registerUser" class="user_register">
+						<text>新用户注册</text>
+					</view>
 				</form>
 			</view>
 			<view class="bottom_auth">
@@ -72,6 +75,12 @@
 			closeCurrentPage(){
 				uni.switchTab({
 					url:'../index/index'
+				})
+			},
+			// 注册
+			registerUser(){
+				uni.navigateTo({
+					url:'./registerUser'
 				})
 			}
 		}

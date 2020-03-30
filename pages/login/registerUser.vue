@@ -1,5 +1,11 @@
 <template>
 	<view class="content">
+		<view class="status_bar">
+			  <!-- 这里是状态栏 -->
+		</view>
+		<view> 
+			<uni-nav-bar background-color="#79a7d9" color="#ffffff" leftIcon="back"  @clickLeft="backToAddress" title="注册账号" ></uni-nav-bar>
+		</view>
 		<view class="register_step">
 			<uni-steps :options="options1" :active="active1"></uni-steps>
 		</view>
@@ -42,9 +48,10 @@
 
 <script>
 	import uniSteps from '@/components/uni-steps/uni-steps.vue'
+	import uniNavBar from "@/components/uni-nav-bar/uni-nav-bar.vue"
 	import { mapState, mapActions, mapGetters , mapMutations } from 'vuex'
 	export default {
-	    components: {uniSteps},
+	    components: {uniSteps,uniNavBar},
 		data(){
 			return {
 				options1:[{title: '验证个人信息'}, {title: '注册成功'}],
@@ -76,7 +83,7 @@
 			}
 		},
 		methods:{
-			...mapActions('customer',['AddCustomer']),
+			...mapActions('waiter',['AddWaiter']),
 			telephonekeyup1(val){
 				let istelephoneReg = /^\d{8,11}$/g
 				this.testIsTelephone = istelephoneReg.test(val.detail.value)
@@ -150,7 +157,7 @@
 						uni.hideToast()
 					},1200)
 				}else{
-					this.AddCustomer(this.formData)
+					this.AddWaiter(this.formData)
 					.then((res)=>{
 						this.active1++
 					})
@@ -163,6 +170,11 @@
 				uni.navigateTo({
 					url:"login"
 				})
+			},
+			backToAddress(){
+				uni.navigateTo({
+					url:"login"
+				})
 			}
 		}
 	}
@@ -171,6 +183,10 @@
 <style>
 	.content{
 		padding-bottom: 10px;
+	}
+	.status_bar {
+		 height: var(--status-bar-height);
+		 width: 100%;
 	}
 	.register_step{
 		margin-top: 10px;
