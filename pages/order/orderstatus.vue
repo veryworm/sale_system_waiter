@@ -33,7 +33,7 @@
 					</view>
 					<view class="product_totalMessage">
 						<ul>
-							<li><img style="width: 90px; height: 70px;" :src="item.photo!==''?item.photo : '../../static/loadfailed.gif'" alt=""></li>
+							<li><img style="width: 90px; height: 70px;" :src="item.photo!==''?item.photo : './orderImg/loadfailed.gif'" alt=""></li>
 							<li style="width: 200px;">订单编号：{{item.id}}</li> 
 							<li style="color: #FF5500;">{{item.name}}</li> 
 							<li>{{item.orderTime | datefmt}}</li>

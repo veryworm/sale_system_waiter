@@ -118,6 +118,7 @@ export default {
 					return item.waiterId == state.info.id
 				})
 				commit("refreshOrderSort",currentWaiterOrder)
+				dispatch("addressJoinOrderData",currentWaiterOrder)
 			}else{
 				// 过滤出与当前顾客订单状态相符的订单
 				let currentWaiterOrder = response.data.filter((item)=>{
@@ -173,16 +174,18 @@ export default {
 			let response = await get(Productapi.ProductFindAll.api)
 			let arr1 = []
 			// 因为搜到的数据没有产品的图片和产品的name,这里过滤出来与product的id相同的数据,然后拼接到搜到的数据中
-			searchOrderData.forEach(i => {
-			    response.data.forEach(j => {
-			        if (i.productId == j.id){
-			            i.name = j.name
-						i.proto = j.photo
-						arr1.push(i)
-			        }
-			    })
-			})
-			commit("refreshSearchOrder",arr1)
+			if(searchOrderData&&searchOrderData!==undefined){
+				searchOrderData.forEach(i => {
+				    response.data.forEach(j => {
+				        if (i.productId == j.id){
+				            i.name = j.name
+							i.photo = j.photo
+							arr1.push(i)
+				        }
+				    })
+				})
+				commit("refreshSearchOrder",arr1)
+			}
 		},
 		// 订单信息里的addressId和地址里相符的Id进行一次整合
 		async addressJoinOrderData({commit,dispatch},currentWaiterOrder){
@@ -209,6 +212,7 @@ export default {
 					 }
 				}
 			})
+			// await dispatch("findProduct",arr1[0])
 			commit("refreshOrderJoinAddress",arr1[0])
 		},
 		async logout({commit}){
